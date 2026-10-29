@@ -426,7 +426,20 @@
     };
     const laneRun = (s, x = R) => pts.push({ x, y: rect(s).bottom - 70, free: true, min: rect(s).bottom - 110 });
 
+    // mobil: jen okraje – doleva nad Službami, doprava nad Ceníkem, doleva nad Kontaktem a tam až k tlačítku
+    const narrow = W < 860;
     sections.forEach(s => {
+      if (narrow) {
+        if (s.id === "kontakt") {
+          const br = rect(s.querySelector("button")), btnY = br.top + br.height / 2;
+          addNode(s, "L"); pts.push({ x: L, y: btnY });
+          nodePts.push({ x: L, y: btnY, tickTo: br.left - 6, end: true });
+        } else {
+          const lane = s.id === "sluzby" ? "L" : "R";
+          addNode(s, lane); laneRun(s, lane === "L" ? L : R);
+        }
+        return;
+      }
       if (s.id === "sluzby") {
         // středem seznamu: mezerou mezi názvem a popisem
         const rows = [...s.querySelectorAll(".row")], pLeft = rect(rows[0].querySelector("p")).left;
